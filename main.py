@@ -144,3 +144,65 @@ class DigitalStaining():
             images_to_use=self.images_to_use,
             device=self.device
         )
+
+
+import argparse
+
+if __name__ == '__main__':
+    # --- 全体の説明 ---
+    parser = argparse.ArgumentParser(
+        description='Digital Staining',
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    # 実行モード (train/test/predict) を選択
+    subparsers = parser.add_subparsers(dest='mode', required=True, help='実行モードを選択してください')
+
+    # --- 学習 (train) モードの引数 ---
+    parser_train = subparsers.add_parser('train', help='モデルの学習を開始します')
+    parser_train.add_argument('--dir', type=str, required=True, help='元データ（train/val/testフォルダを含む）のパス')
+    parser_train.add_argument('--name', type=str, default='Run', help='学習の名称 (モデルの保存名などに使われます)')
+    parser_train.add_argument('--n_epoch', type=int, default=50, help='学習のエポック数')
+    parser_train.add_argument('--batch_size', type=int, default=16, help='バッチサイズ')
+    parser_train.add_argument('--num_workers', type=int, default=4, help='データ読み込みの並列プロセス数 (メモリ不足の場合は小さくしてください)')
+    parser_train.add_argument('--no_produce_image', action='store_false', dest='produce_image', help='このフラグを立てると画像の前処理・拡張を行いません')
+    parser_train.add_argument('--main_dir', type=str, default=None, help='前処理済み画像の保存先 (指定しない場合は自動生成されます)')
+
+    # --- テスト (test) モードの引数 ---
+    parser_test = subparsers.add_parser('test', help='学習済みモデルの評価を行います')
+    parser_test.add_argument('--dir', type=str, required=True, help='評価用データセットのパス')
+    parser_test.add_argument('--name', type=str, default='Run', help='評価したい学習の名称')
+    # testモードではデフォルトで画像前処理をオフにする
+    parser_test.set_defaults(produce_image=False)
+
+
+    # --- 予測 (predict) モードの引数 ---
+    parser_predict = subparsers.add_parser('predict', help='新しい画像に対して予測を行います')
+    parser_predict.add_argument('--original_dir', type=str, required=True, help='予測したい入力画像のディレクトリパス')
+    parser_predict.add_argument('--new_dir', type=str, required=True, help='予測画像の保存先ディレクトリパス')
+    parser_predict.add_argument('--name', type=str, default='Run', help='使用する学習済みモデルの名称')
+    parser_predict.add_argument('--test_id', type=str, default='lpips', choices=['mse', 'ssim', 'lpips'],
+                                help='使用するモデルの重みを選択 (どの評価指標で最適化されたモデルか)')
+
+    # --- 引数の解析と実行 ---
+    args = parser.parse_args()
+
+    # DigitalStainingクラスのインスタンス化
+    # DigitalStainingクラスの__init__に存在しない引数をargsから削除
+    digital_staining_args = vars(args).copy()
+    allowed_args = DigitalStaining.__init__.__code__.co_varnames
+    for key in list(digital_staining_args.keys()):
+        if key not in allowed_args:
+            del digital_staining_args[key]
+
+    stain = DigitalStaining(**digital_staining_args)
+
+    # 選択されたモードに応じて実行
+    if args.mode == 'train':
+        stain.train()
+    elif args.mode == 'test':
+        stain.test()
+    elif args.mode == 'predict':
+        # predictモードではdir引数が不要なため、クラス初期化後に設定
+        stain.original_dir = args.original_dir
+        stain.new_dir = args.new_dir
+        stain.predict()
