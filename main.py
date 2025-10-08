@@ -13,9 +13,9 @@ class DigitalStaining():
             new_dir=None,  # train or test : なし, predict : 予測画像保存フォルダのpath
             name="Run",  # 名称
             produce_image=True,  # 一度前処理をしている場合はFalse
-            train_folders=["1"],  # Trainデータのフォルダ名
-            val_folders=["2"],  # Valデータのフォルダ名
-            test_folders=["3"],  # Testデータのフォルダ名
+            train_folders=["train"],  # Trainデータのフォルダ名
+            val_folders=["val"],  # Valデータのフォルダ名
+            test_folders=["test"],  # Testデータのフォルダ名
             # produce_images
             img_n=100,
             img_size=256,
