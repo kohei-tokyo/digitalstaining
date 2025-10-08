@@ -1,1 +1,1 @@
-# digitalstaining
+# DigitalStaining
