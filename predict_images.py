@@ -2,20 +2,9 @@ import os
 from tifffile import tifffile
 import torch
 import numpy as np
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-import matplotlib.pyplot as plt
-import cv2
-from torch.utils.data import DataLoader
-from torch.utils.data import ConcatDataset
-from pytorch_msssim import ssim
-import torch.nn as nn
-import timm
 from tqdm import tqdm
 import segmentation_models_pytorch as smp
 import torch.nn.functional as F
-import lpips
-import itertools
 #%%
 def normalize_clip(img, vmin, vmax):
     img = np.clip(img, vmin, vmax)

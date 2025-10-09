@@ -20,7 +20,7 @@ class DigitalStaining():
             img_n=100,
             img_size=256,
             # gan
-            n_epoch=50,
+            n_epoch=10,
             discriminator="Patch4",  # Patch4, Patch3, Patch5, ResnetPatch, Resnet, or U_Net
             num_workers=8,  # GPUのメモリが足りない場合は小さくしてください
             in_chans=2,
