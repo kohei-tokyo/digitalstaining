@@ -164,6 +164,7 @@ if __name__ == '__main__':
     parser_train.add_argument('--n_epoch', type=int, default=50, help='学習のエポック数')
     parser_train.add_argument('--batch_size', type=int, default=16, help='バッチサイズ')
     parser_train.add_argument('--num_workers', type=int, default=4, help='データ読み込みの並列プロセス数 (メモリ不足の場合は小さくしてください)')
+    parser_train.add_argument('--discriminator', type=str, default='Patch4', help='Discriminatorの種類（GANであればPatch4、U-NetであればU_Netを推奨します）')
     parser_train.add_argument('--no_produce_image', action='store_false', dest='produce_image', help='このフラグを立てると画像の前処理・拡張を行いません')
     parser_train.add_argument('--main_dir', type=str, default=None, help='前処理済み画像の保存先 (指定しない場合は自動生成されます)')
 
@@ -177,7 +178,7 @@ if __name__ == '__main__':
 
     # --- 予測 (predict) モードの引数 ---
     parser_predict = subparsers.add_parser('predict', help='新しい画像に対して予測を行います')
-    parser_predict.add_argument('--original_dir', type=str, required=True, help='予測したい入力画像のディレクトリパス')
+    parser_predict.add_argument('--dir', type=str, required=True, help='予測したい入力画像のディレクトリパス')
     parser_predict.add_argument('--new_dir', type=str, required=True, help='予測画像の保存先ディレクトリパス')
     parser_predict.add_argument('--name', type=str, default='Run', help='使用する学習済みモデルの名称')
     parser_predict.add_argument('--test_id', type=str, default='lpips', choices=['mse', 'ssim', 'lpips'],
